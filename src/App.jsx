@@ -4,6 +4,8 @@ import Slider from '@mui/material/Slider';
 import './App.css'
 import SimplePeer from 'vite-compatible-simple-peer';
 import adapter from 'webrtc-adapter';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 
 function App() {
 const [remoteId, setRemoteId] = useState('');
@@ -213,41 +215,42 @@ max={2.0}
 </div>
 </div>
 <div id={'contain2'}>
-<div>
-<video id="localVideo" ref={localVideoRef} autoPlay muted style={{pointerEvents:'none',display:'block',position:'absolute',zIndex:3000,top:'0',height:'50vh',width:'50vh'}} />
-<video id="remoteVideo" ref={remoteVideoRef} autoPlay style={{pointerEvents:'none',display:'block',position:'absolute',zIndex:3000,top:'0',height:'50vh',width:'50vh'}} />
-<div>
-<label htmlFor="remoteId">Remote Peer ID:</label>
-<input
-type="text"
-id="remoteId"
-value={remoteId}
-onChange={e => setRemoteId(e.target.value)}
-placeholder="Enter remote peer ID"
-/>
-<button id="connectButton" onClick={handleConnect} style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,top:'50',height:'10vh',width:'10vh'}}>
-Connect
-</button>
-</div>
-<div>
-<textarea id="chatbox" ref={chatboxRef} readOnly 
-style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,top:'60',height:'25vh',width:'50vh'}}
-value={chatLog.map(msg => `${msg.sender}: ${msg.message}`).join('\n')} />
-<input
-type="text"
-id="messageInput"
-value={message}
-onChange={e => setMessage(e.target.value)}
-placeholder="Enter message"
-style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,top:'50',height:'10vh',width:'25vh'}}
+  <Container maxWidth="md"> {/* Added Container */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}> {/* Added Box */}
+        <Box sx={{ display: 'flex', gap: 2 }}> {/* Added Box for videos */}
+          <video id="localVideo" ref={localVideoRef} autoPlay muted />
+          <video id="remoteVideo" ref={remoteVideoRef} autoPlay />
+        </Box>
 
- 
-/>
-<button id="sendButton" onClick={handleSendMessage}style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,top:'50',height:'5vh',width:'5vh'}}>
-Send
-</button>
-</div>
-</div>
+        <Box> {/* Added Box for connection input */}
+          <label htmlFor="remoteId">Remote Peer ID:</label>
+          <input
+            type="text"
+            id="remoteId"
+            value={remoteId}
+            onChange={e => setRemoteId(e.target.value)}
+            placeholder="Enter remote peer ID"
+          />
+          <button id="connectButton" onClick={handleConnect}>
+            Connect
+          </button>
+        </Box>
+
+        <Box> {/* Added Box for chat */}
+          <textarea id="chatbox" ref={chatboxRef} readOnly value={chatLog.map(msg => `${msg.sender}: ${msg.message}`).join('\n')} />
+          <input
+            type="text"
+            id="messageInput"
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            placeholder="Enter message"
+          />
+          <button id="sendButton" onClick={handleSendMessage}>
+            Send
+          </button>
+        </Box>
+      </Box>
+    </Container>
 <canvas id={'bcanvas'} hidden style={{pointerEvents:'none',display:'none',zIndex:2100,position:'absolute',height:'100vh',width:'100vh',marginLeft:'auto',marginRight:'auto',backgroundColor:'rgba(0,255,0,1.0)',top:'0',imageRendering:'auto'}}></canvas>
 <img id={'resultImage'} src={''}></img>
 </div>
