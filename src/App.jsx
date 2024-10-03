@@ -6,20 +6,19 @@ import SimplePeer from 'vite-compatible-simple-peer';
 import adapter from 'webrtc-adapter';
 
 function App() {
- const [remoteId, setRemoteId] = useState('');
- const [message, setMessage] = useState('');
- const [chatLog, setChatLog] = useState([]);
- let localVideoRef = useRef(null);
- const remoteVideoRef = useRef(null);
- const chatboxRef = useRef(null);
- useEffect(() => {
+const [remoteId, setRemoteId] = useState('');
+const [message, setMessage] = useState('');
+const [chatLog, setChatLog] = useState([]);
+const localVideoRef = useRef(null);
+const remoteVideoRef = useRef(null);
+const chatboxRef = useRef(null);
+useEffect(() => {
  // Get user media (camera and microphone)
- navigator.mediaDevices.getUserMedia({ video: true, audio: true })
- .then(stream => {
-localVideoRef=document.querySelector('#localVideo');
- localVideoRef.current.srcObject = stream;
- })
- .catch(err => console.error('Error accessing media devices:', err));
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+.then(stream => {
+localVideoRef.current.srcObject = stream;
+})
+.catch(err => console.error('Error accessing media devices:', err));
 
  // Clean up: stop the tracks when the component unmounts
  return () => {
@@ -215,6 +214,7 @@ max={2.0}
 </div>
 <div id={'contain2'}>
 <div>
+<video id="localVideo" ref={localVideoRef} autoPlay muted />
 <video id="remoteVideo" ref={remoteVideoRef} autoPlay />
 <div>
 <label htmlFor="remoteId">Remote Peer ID:</label>
