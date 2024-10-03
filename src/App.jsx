@@ -16,6 +16,7 @@ function App() {
  // Get user media (camera and microphone)
  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
  .then(stream => {
+localVideoRef=document.querySelector('#localVideo');
  localVideoRef.current.srcObject = stream;
  })
  .catch(err => console.error('Error accessing media devices:', err));
