@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import './App.css'
 import simplePeer from 'vite-compatible-simple-peer';
+import adapter from 'webrtc-adapter';
 
 function App() {
 useLayoutEffect(() => {
