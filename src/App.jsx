@@ -194,6 +194,18 @@ max={2.0}
 </>
 );
 
+navigator.mediaDevices.enumerateDevices().then(function (devices) {
+  devices.forEach(function (device) {
+    console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+  });
+});
+
+if (simplePeer.WEBRTC_SUPPORT) {
+  console.log("WebRTC is supported in this browser");
+} else {
+  console.log("WebRTC is not supported in this browser");
+}
+
 }
 
 export default App
