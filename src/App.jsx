@@ -214,7 +214,6 @@ max={2.0}
 </div>
 <div id={'contain2'}>
 <div>
-<video id="localVideo" ref={localVideoRef} autoPlay muted />
 <video id="remoteVideo" ref={remoteVideoRef} autoPlay />
 <div>
 <label htmlFor="remoteId">Remote Peer ID:</label>
