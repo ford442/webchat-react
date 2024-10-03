@@ -12,7 +12,8 @@
     "@emotion/styled": "latest",
     "@mui/material": "next",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "vite-compatible-simple-peer": "^9.11.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "latest",
