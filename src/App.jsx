@@ -214,7 +214,7 @@ max={2.0}
 </div>
 </div>
 <div id={'contain2'}>
-  <Container maxWidth="md">  sx={{ zIndex: 3000 }} {/* Added Container */}
+    <Container maxWidth="md" sx={{ zIndex: 3000 }}> {/* Corrected sx prop */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}> {/* Added Box */}
         <Box sx={{ display: 'flex', gap: 2 }}> {/* Added Box for videos */}
           <video id="localVideo" ref={localVideoRef} autoPlay muted />
