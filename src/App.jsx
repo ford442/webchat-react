@@ -9,7 +9,7 @@ function App() {
  const [remoteId, setRemoteId] = useState('');
  const [message, setMessage] = useState('');
  const [chatLog, setChatLog] = useState([]);
- const localVideoRef = useRef(null);
+ let localVideoRef = useRef(null);
  const remoteVideoRef = useRef(null);
  const chatboxRef = useRef(null);
  useEffect(() => {
