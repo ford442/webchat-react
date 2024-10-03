@@ -22,17 +22,44 @@ reader.readAsDataURL(file);
 }
 });
 
-  navigator.mediaDevices.enumerateDevices().then(function (devices) {
-  devices.forEach(function (device) {
-    console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
-  });
-});
 
-if (simplePeer.WEBRTC_SUPPORT) {
-  console.log("WebRTC is supported in this browser");
-} else {
-  console.log("WebRTC is not supported in this browser");
-}
+      navigator.mediaDevices
+        .getUserMedia({
+          video: false,
+          audio: true,
+        })
+        .then((stream) => {
+          const p = new SimplePeer({
+            initiator: location.hash === "#1",
+            trickle: false,
+            stream,
+          });
+          p.on("error", (err) => console.log("error", err));
+          p.on("signal", (data) => {
+            console.log("SIGNAL", JSON.stringify(data));
+            document.querySelector("#outgoing").textContent =
+              JSON.stringify(data);
+          });
+          document.querySelector("form").addEventListener("submit", (ev) => {
+            ev.preventDefault();
+            p.signal(JSON.parse(document.querySelector("#incoming").value));
+          });
+          p.on("connect", () => {
+            console.log("CONNECT");
+            p.send("whatever" + Math.random()); // Or Files
+          });
+          p.on("data", (data) => {
+            console.log("data: " + data);
+          });
+          p.on("stream", function (stream) {
+            let video = document.getElementById("video");
+            video.srcObject = stream;
+            video.play();
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
 const xhrPath = document.querySelector('#loadPath').innerHTML;
 const xhr = new XMLHttpRequest();
