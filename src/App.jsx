@@ -23,45 +23,64 @@ reader.readAsDataURL(file);
 }
 });
 
+ const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+    const   
+ remoteIdInput = document.getElementById('remoteId');
+    const connectButton = document.getElementById('connectButton');
+    const chatbox = document.getElementById('chatbox');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');   
 
-      navigator.mediaDevices
-        .getUserMedia({
-          video: false,
-          audio: true,
-        })
-        .then((stream) => {
-          const p = new SimplePeer({
-            initiator: location.hash === "#1",
-            trickle: false,
-            stream,
-          });
-          p.on("error", (err) => console.log("error", err));
-          p.on("signal", (data) => {
-            console.log("SIGNAL", JSON.stringify(data));
-            document.querySelector("#outgoing").textContent =
-              JSON.stringify(data);
-          });
-          document.querySelector("form").addEventListener("submit", (ev) => {
-            ev.preventDefault();
-            p.signal(JSON.parse(document.querySelector("#incoming").value));
-          });
-          p.on("connect", () => {
-            console.log("CONNECT");
-            p.send("whatever" + Math.random()); // Or Files
-          });
-          p.on("data", (data) => {
-            console.log("data: " + data);
-          });
-          p.on("stream", function (stream) {
-            let video = document.getElementById("video");
-            video.srcObject = stream;
-            video.play();
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    let localStream, peer;
 
+    // Get user media
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        localStream = stream;
+        localVideo.srcObject = stream;
+      });
+
+    connectButton.onclick   
+ = () => {
+      const remoteId = remoteIdInput.value;
+
+      // Create a new Peer object (initiator determines if it's the first to connect)
+      peer = new SimplePeer({ initiator: true, stream: localStream }); 
+
+      peer.on('signal', data => {
+        // Send this signaling data to the remote peer (you'll handle this manually)
+        console.log('Signaling data to send:', data);
+        // For now, you'll manually copy and paste this to the other peer
+      });
+
+      peer.on('connect', () => {
+        console.log('Connected to peer!');
+      });
+
+      peer.on('data', data => {
+        // Handle incoming text messages
+        chatbox.value += `Remote: ${data.toString()}\n`;
+      });
+
+      peer.on('stream', stream => {
+        // Handle incoming video/audio stream
+        remoteVideo.srcObject = stream;
+      });
+
+      // Handle incoming signaling data (you'll paste it manually)
+      // In a real app, you'd receive this from the other peer
+      const handleIncomingSignal = (data) => {
+        peer.signal(data);
+      };
+    };
+
+    sendButton.onclick = () => {
+      const message = messageInput.value;
+      peer.send(message);
+      chatbox.value += `You: ${message}\n`;
+      messageInput.value = '';
+    };
 const xhrPath = document.querySelector('#loadPath').innerHTML;
 const xhr = new XMLHttpRequest();
 xhr.open('GET', xhrPath, true); // Replace with your filename
