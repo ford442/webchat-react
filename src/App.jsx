@@ -21,30 +21,30 @@ localVideoRef.current.srcObject = stream;
 .catch(err => console.error('Error accessing media devices:', err));
 
  // Clean up: stop the tracks when the component unmounts
- return () => {
- if (localVideoRef.current.srcObject) {
- localVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
- }
- };
- }, []); // Empty dependency array ensures this runs only once
+return () => {
+if (localVideoRef.current.srcObject) {
+localVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+}
+};
+}, []); // Empty dependency array ensures this runs only once
 
- const handleConnect = () => {
+const handleConnect = () => {
  // TODO: Implement your WebRTC connection logic here using the remoteId
- console.log('Connecting to peer:', remoteId);
- };
+console.log('Connecting to peer:', remoteId);
+};
 
- const handleSendMessage = () => {
+const handleSendMessage = () => {
  // TODO: Implement your messaging logic here using the message
- setChatLog([...chatLog, { sender: 'me', message }]);
- setMessage('');
- };
+setChatLog([...chatLog, { sender: 'me', message }]);
+setMessage('');
+};
 
- useEffect(() => {
- // Scroll to the bottom of the chatbox whenever the chatLog updates
- if (chatboxRef.current) {
- chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
- }
- }, [chatLog]);
+useEffect(() => {
+// Scroll to the bottom of the chatbox whenever the chatLog updates
+if (chatboxRef.current) {
+chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
+}
+}, [chatLog]);
  
 useLayoutEffect(() => {
 const imageChannel = new BroadcastChannel('imageChannel');
@@ -214,8 +214,8 @@ max={2.0}
 </div>
 <div id={'contain2'}>
 <div>
-<video id="localVideo" ref={localVideoRef} autoPlay muted />
-<video id="remoteVideo" ref={remoteVideoRef} autoPlay />
+<video id="localVideo" ref={localVideoRef} autoPlay muted style={{pointerEvents:'none',display:'block',position:'absolute',zIndex:3000,top:'0',height:'50vh',width:'50vh'}} />
+<video id="remoteVideo" ref={remoteVideoRef} autoPlay style={{pointerEvents:'none',display:'block',position:'absolute',zIndex:3000,top:'0',height:'50vh',width:'50vh'}} />
 <div>
 <label htmlFor="remoteId">Remote Peer ID:</label>
 <input
@@ -225,20 +225,25 @@ value={remoteId}
 onChange={e => setRemoteId(e.target.value)}
 placeholder="Enter remote peer ID"
 />
-<button id="connectButton" onClick={handleConnect}>
+<button id="connectButton" onClick={handleConnect} style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,top:'50',height:'10vh',width:'10vh'}}>
 Connect
 </button>
 </div>
 <div>
-<textarea id="chatbox" ref={chatboxRef} readOnly value={chatLog.map(msg => `${msg.sender}: ${msg.message}`).join('\n')} />
+<textarea id="chatbox" ref={chatboxRef} readOnly 
+style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,top:'60',height:'25vh',width:'50vh'}}
+value={chatLog.map(msg => `${msg.sender}: ${msg.message}`).join('\n')} />
 <input
 type="text"
 id="messageInput"
 value={message}
 onChange={e => setMessage(e.target.value)}
 placeholder="Enter message"
+style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,top:'50',height:'10vh',width:'25vh'}}
+
+ 
 />
-<button id="sendButton" onClick={handleSendMessage}>
+<button id="sendButton" onClick={handleSendMessage}style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,top:'50',height:'5vh',width:'5vh'}}>
 Send
 </button>
 </div>
