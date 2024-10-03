@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback,useLayoutEffect } from 'react'
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import './App.css'
-import Peer from 'simple-peer';
+import Peer from 'vite-compatible-simple-peer';
 
 function App() {
 useLayoutEffect(() => {
