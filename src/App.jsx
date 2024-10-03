@@ -6,6 +6,46 @@ import SimplePeer from 'vite-compatible-simple-peer';
 import adapter from 'webrtc-adapter';
 
 function App() {
+ const [remoteId, setRemoteId] = useState('');
+ const [message, setMessage] = useState('');
+ const [chatLog, setChatLog] = useState([]);
+ const localVideoRef = useRef(null);
+ const remoteVideoRef = useRef(null);
+ const chatboxRef = useRef(null);
+ useEffect(() => {
+ // Get user media (camera and microphone)
+ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+ .then(stream => {
+ localVideoRef.current.srcObject = stream;
+ })
+ .catch(err => console.error('Error accessing media devices:', err));
+
+ // Clean up: stop the tracks when the component unmounts
+ return () => {
+ if (localVideoRef.current.srcObject) {
+ localVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+ }
+ };
+ }, []); // Empty dependency array ensures this runs only once
+
+ const handleConnect = () => {
+ // TODO: Implement your WebRTC connection logic here using the remoteId
+ console.log('Connecting to peer:', remoteId);
+ };
+
+ const handleSendMessage = () => {
+ // TODO: Implement your messaging logic here using the message
+ setChatLog([...chatLog, { sender: 'me', message }]);
+ setMessage('');
+ };
+
+ useEffect(() => {
+ // Scroll to the bottom of the chatbox whenever the chatLog updates
+ if (chatboxRef.current) {
+ chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
+ }
+ }, [chatLog]);
+ 
 useLayoutEffect(() => {
 const imageChannel = new BroadcastChannel('imageChannel');
 const fileInput = document.getElementById('fileInput');
@@ -18,69 +58,11 @@ const imageDataURL = e.target.result;
 window.open('./depth.1ink');
 setTimeout(function(){
 imageChannel.postMessage({ imageDataURL });
-},4500);      };
+},4500); };
 reader.readAsDataURL(file);
 }
 });
 
- const localVideo = document.getElementById('localVideo');
-    const remoteVideo = document.getElementById('remoteVideo');
-    const   
- remoteIdInput = document.getElementById('remoteId');
-    const connectButton = document.getElementById('connectButton');
-    const chatbox = document.getElementById('chatbox');
-    const messageInput = document.getElementById('messageInput');
-    const sendButton = document.getElementById('sendButton');   
-
-    let localStream, peer;
-
-    // Get user media
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        localStream = stream;
-        localVideo.srcObject = stream;
-      });
-
-    connectButton.onclick   
- = () => {
-      const remoteId = remoteIdInput.value;
-
-      // Create a new Peer object (initiator determines if it's the first to connect)
-      peer = new SimplePeer({ initiator: true, stream: localStream }); 
-
-      peer.on('signal', data => {
-        // Send this signaling data to the remote peer (you'll handle this manually)
-        console.log('Signaling data to send:', data);
-        // For now, you'll manually copy and paste this to the other peer
-      });
-
-      peer.on('connect', () => {
-        console.log('Connected to peer!');
-      });
-
-      peer.on('data', data => {
-        // Handle incoming text messages
-        chatbox.value += `Remote: ${data.toString()}\n`;
-      });
-
-      peer.on('stream', stream => {
-        // Handle incoming video/audio stream
-        remoteVideo.srcObject = stream;
-      });
-
-      // Handle incoming signaling data (you'll paste it manually)
-      // In a real app, you'd receive this from the other peer
-      const handleIncomingSignal = (data) => {
-        peer.signal(data);
-      };
-    };
-
-    sendButton.onclick = () => {
-      const message = messageInput.value;
-      peer.send(message);
-      chatbox.value += `You: ${message}\n`;
-      messageInput.value = '';
-    };
 const xhrPath = document.querySelector('#loadPath').innerHTML;
 const xhr = new XMLHttpRequest();
 xhr.open('GET', xhrPath, true); // Replace with your filename
@@ -104,7 +86,7 @@ xhr.onload = function() {
 console.log('got load loader');
 if (xhr.status === 200) {
 const utf32Data = xhr.response;
-  //  const decoder = new TextDecoder('utf-32'); // Or 'utf-32be'
+ // const decoder = new TextDecoder('utf-32'); // Or 'utf-32be'
 const jsCode = decodeUTF32(new Uint8Array(utf32Data), true); // Assuming little-endian
 const scr = document.createElement('script');
 // scr.type = 'module';
@@ -122,7 +104,7 @@ Module.callMain();
 };
 xhr.send();
 }, [])
-  
+ 
 return (
 <>
 <link charset={"utf-8"} crossorigin rel='stylesheet' href='https://css.1ink.us/sh1.1iss'/>
@@ -161,7 +143,7 @@ max={2.0}
 </div></ul></section>
 </nav>
 <main id={'panel'}>
-  
+ 
 <iframe src={'./bezz.1ink'} id={'circle'} title='Circular mask'></iframe>
 <input type={'button'} id={'startBtn'} style={{backgroundColor:'gold',position:'absolute',display:'block',left:'6%',top:'9%',zIndex:3200,border:'4px solid #e7e7e7',borderRadius:'17%'}}></input>
 <input type={'button'} id={'menuBtn'} style={{backgroundColor:'black',position:'absolute',display:'block',left:'3%',top:'5%',zIndex:3200,border:'6px solid #e7e7e7',borderRadius:'20%'}}></input>
@@ -202,7 +184,7 @@ max={2.0}
 <progress value={'0'} max={'100'} id={'progress'}></progress>
 </div>
 <input type={'checkbox'} id={"di"} hidden></input>
-//   //   //   //
+// // // //
 <div id={'srsiz'} hidden>1000</div>
 <div id={'ffire'} hidden>0</div>
 <div id={'iwid'} hidden>0</div>
@@ -223,7 +205,7 @@ max={2.0}
 <div id={'idur'} hidden>0</div>
 <div id={'itim'} hidden>0</div>
 <div id={'smd'} hidden>110.10</div>
-// //  //
+// // //
 <div id={'wrap'}>
 <div id={'contain1'}>
 <canvas className='emscripten' id={'scanvas'} style={{pointerEvents:'auto',display:'block',position:'absolute',zIndex:3000,backgroundColor:'rgba(233,233,233,1.0)',top:'0',height:'100vh',width:'100vh',imageRendering:'auto',transform:'scaleY(1.0)'}}></canvas>
@@ -231,6 +213,36 @@ max={2.0}
 </div>
 </div>
 <div id={'contain2'}>
+<div>
+<video id="localVideo" ref={localVideoRef} autoPlay muted />
+<video id="remoteVideo" ref={remoteVideoRef} autoPlay />
+<div>
+<label htmlFor="remoteId">Remote Peer ID:</label>
+<input
+type="text"
+id="remoteId"
+value={remoteId}
+onChange={e => setRemoteId(e.target.value)}
+placeholder="Enter remote peer ID"
+/>
+<button id="connectButton" onClick={handleConnect}>
+Connect
+</button>
+</div>
+<div>
+<textarea id="chatbox" ref={chatboxRef} readOnly value={chatLog.map(msg => `${msg.sender}: ${msg.message}`).join('\n')} />
+<input
+type="text"
+id="messageInput"
+value={message}
+onChange={e => setMessage(e.target.value)}
+placeholder="Enter message"
+/>
+<button id="sendButton" onClick={handleSendMessage}>
+Send
+</button>
+</div>
+</div>
 <canvas id={'bcanvas'} hidden style={{pointerEvents:'none',display:'none',zIndex:2100,position:'absolute',height:'100vh',width:'100vh',marginLeft:'auto',marginRight:'auto',backgroundColor:'rgba(0,255,0,1.0)',top:'0',imageRendering:'auto'}}></canvas>
 <img id={'resultImage'} src={''}></img>
 </div>
@@ -242,9 +254,9 @@ max={2.0}
 </div>
 <div style={{pointerEvents:'none',height:'100vh'}}>
 <video hidden muted src={'./video-1456459792.mp4'}
-       loop crossorigin playsinline
-       id={'ivi'} preload={'auto'}
-       style={{pointerEvents:'none',transform:'scaleY(-1.0)'}}></video>
+ loop crossorigin playsinline
+ id={'ivi'} preload={'auto'}
+ style={{pointerEvents:'none',transform:'scaleY(-1.0)'}}></video>
 </div>
 <div style={{pointerEvents:'none',height:'100vh'}}>
 <video hidden muted crossorigin playsinline id={'ldv'} preload={'auto'} style={{pointerEvents:'none'}}></video>
