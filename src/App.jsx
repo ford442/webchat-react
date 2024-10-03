@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback,useLayoutEffect } from 'react'
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import './App.css'
-import Peer from 'vite-compatible-simple-peer';
+import simplePeer from 'vite-compatible-simple-peer';
 
 function App() {
 useLayoutEffect(() => {
@@ -21,6 +21,18 @@ imageChannel.postMessage({ imageDataURL });
 reader.readAsDataURL(file);
 }
 });
+
+  navigator.mediaDevices.enumerateDevices().then(function (devices) {
+  devices.forEach(function (device) {
+    console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+  });
+});
+
+if (simplePeer.WEBRTC_SUPPORT) {
+  console.log("WebRTC is supported in this browser");
+} else {
+  console.log("WebRTC is not supported in this browser");
+}
 
 const xhrPath = document.querySelector('#loadPath').innerHTML;
 const xhr = new XMLHttpRequest();
@@ -193,18 +205,6 @@ max={2.0}
 <audio crossorigin id={'track'} preload={'auto'} hidden style={{pointerEvents:'none'}}></audio>
 </>
 );
-
-navigator.mediaDevices.enumerateDevices().then(function (devices) {
-  devices.forEach(function (device) {
-    console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
-  });
-});
-
-if (simplePeer.WEBRTC_SUPPORT) {
-  console.log("WebRTC is supported in this browser");
-} else {
-  console.log("WebRTC is not supported in this browser");
-}
 
 }
 
